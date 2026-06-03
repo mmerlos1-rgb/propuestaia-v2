@@ -4,13 +4,24 @@ module.exports = async function handler(req, res) {
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
 
   if (req.method === "OPTIONS") return res.status(204).end();
-  if (req.method !== "POST") return res.status(405).json({ error: "Método no permitido" });
+  if (req.method !== "POST") return res.status(405).json({ error: "Metodo no permitido" });
 
   try {
-   const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-const { prompt } = body;
-    const API_KEY = process.env.ANTHROPIC_API_KEY;
+    // Handle body parsing for all cases
+    let prompt;
+    if (req.body) {
+      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
+      prompt = body.prompt;
+    } else {
+      // Read raw body
+      const chunks = [];
+      for await (const chunk of req) chunks.push(chunk);
+      const raw = Buffer.concat(chunks).toString();
+      const body = JSON.parse(raw);
+      prompt = body.prompt;
+    }
 
+    const API_KEY = process.env.ANTHROPIC_API_KEY;
     if (!API_KEY) return res.status(500).json({ error: "API Key no configurada" });
     if (!prompt) return res.status(400).json({ error: "Falta el prompt" });
 
@@ -34,4 +45,4 @@ const { prompt } = body;
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
-}
+};
