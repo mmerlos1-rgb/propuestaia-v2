@@ -7,23 +7,30 @@ module.exports = async function handler(req, res) {
   if (req.method !== "POST") return res.status(405).json({ error: "Metodo no permitido" });
 
   try {
-    // Handle body parsing for all cases
-    let prompt;
-    if (req.body) {
-      const body = typeof req.body === "string" ? JSON.parse(req.body) : req.body;
-      prompt = body.prompt;
-    } else {
-      // Read raw body
+    let body = req.body;
+    if (typeof body === "string") body = JSON.parse(body);
+    if (!body) {
       const chunks = [];
       for await (const chunk of req) chunks.push(chunk);
-      const raw = Buffer.concat(chunks).toString();
-      const body = JSON.parse(raw);
-      prompt = body.prompt;
+      body = JSON.parse(Buffer.concat(chunks).toString());
     }
 
     const API_KEY = process.env.ANTHROPIC_API_KEY;
     if (!API_KEY) return res.status(500).json({ error: "API Key no configurada" });
-    if (!prompt) return res.status(400).json({ error: "Falta el prompt" });
+
+    // Accept both formats: { prompt } or { model, messages, max_tokens }
+    let anthropicBody;
+    if (body.prompt) {
+      anthropicBody = {
+        model: "claude-sonnet-4-20250514",
+        max_tokens: 1000,
+        messages: [{ role: "user", content: body.prompt }],
+      };
+    } else if (body.messages) {
+      anthropicBody = body;
+    } else {
+      return res.status(400).json({ error: "Falta prompt o messages" });
+    }
 
     const response = await fetch("https://api.anthropic.com/v1/messages", {
       method: "POST",
@@ -32,11 +39,7 @@ module.exports = async function handler(req, res) {
         "x-api-key": API_KEY,
         "anthropic-version": "2023-06-01",
       },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1000,
-        messages: [{ role: "user", content: prompt }],
-      }),
+      body: JSON.stringify(anthropicBody),
     });
 
     const data = await response.json();
