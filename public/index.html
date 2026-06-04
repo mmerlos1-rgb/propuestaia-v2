@@ -99,61 +99,38 @@ textarea{min-height:80px;resize:vertical}
 
 <script>
 async function generar() {
-  const myco = document.getElementById('myco').value || 'Mi Empresa';
-  const myname = document.getElementById('myname').value || 'El equipo';
-  const client = document.getElementById('client').value || 'el cliente';
-  const sector = document.getElementById('sector').value || 'su sector';
-  const need = document.getElementById('need').value || 'mejorar su negocio';
-  const service = document.getElementById('service').value || 'nuestros servicios';
-  const price = document.getElementById('price').value || '499';
-  const mod = document.getElementById('mod').value;
+  var myco = document.getElementById('myco').value || 'Mi Empresa';
+  var myname = document.getElementById('myname').value || 'El equipo';
+  var client = document.getElementById('client').value || 'el cliente';
+  var sector = document.getElementById('sector').value || 'su sector';
+  var need = document.getElementById('need').value || 'mejorar su negocio';
+  var service = document.getElementById('service').value || 'nuestros servicios';
+  var price = document.getElementById('price').value || '499';
+  var mod = document.getElementById('mod').value;
 
-  const btn = document.getElementById('genBtn');
-  const spinner = document.getElementById('spinner');
-  const result = document.getElementById('result');
+  var btn = document.getElementById('genBtn');
+  var spinner = document.getElementById('spinner');
+  var result = document.getElementById('result');
 
   btn.disabled = true;
   spinner.style.display = 'block';
   result.style.display = 'none';
 
-  const prompt = `Eres un experto redactor de propuestas comerciales B2B. Genera una propuesta COMPLETA y persuasiva.
-
-Datos:
-- Empresa: ${myco} (representada por ${myname})
-- Cliente: ${client} (sector: ${sector})
-- Problema del cliente: ${need}
-- Servicio: ${service}
-- Precio: ${price}€ (${mod})
-
-Estructura:
-1. Encabezado con fecha
-2. Saludo personalizado
-3. Diagnóstico del cliente
-4. Solución propuesta
-5. Entregables (4-5 puntos)
-6. Inversión y modalidad
-7. Por qué elegirnos (2 razones)
-8. Próximos pasos
-9. Firma de ${myname}
-
-Sé concreto y personalizado. Máximo 400 palabras. Sin markdown.`;
+  var prompt = 'Eres un experto redactor de propuestas comerciales B2B. Genera una propuesta COMPLETA y persuasiva.\n\nDatos:\n- Empresa: ' + myco + ' (representada por ' + myname + ')\n- Cliente: ' + client + ' (sector: ' + sector + ')\n- Problema: ' + need + '\n- Servicio: ' + service + '\n- Precio: ' + price + 'EUR (' + mod + ')\n\nIncluye: saludo, diagnostico, solucion, entregables, inversion, por que elegirnos, proximos pasos y firma. Maximo 400 palabras. Sin markdown.';
 
   try {
-    const resp = await fetch('/api/generate', {
+    var resp = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt })
+      body: JSON.stringify({ prompt: prompt })
     });
-
-    const data = await resp.json();
-  
-console.log('Respuesta:', JSON.stringify(data));
-const text = data.content[0].text;
+    var json = await resp.json();
+    var text = json.content[0].text;
     document.getElementById('resultText').textContent = text;
     result.style.display = 'block';
     result.scrollIntoView({ behavior: 'smooth' });
   } catch(e) {
-    document.getElementById('resultText').textContent = 'Error de conexión: ' + e.message;
+    document.getElementById('resultText').textContent = 'Error: ' + e.message;
     result.style.display = 'block';
   }
 
@@ -162,11 +139,11 @@ const text = data.content[0].text;
 }
 
 function copiar() {
-  const text = document.getElementById('resultText').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.querySelector('.copy');
-    btn.textContent = '✓ Copiado';
-    setTimeout(() => btn.textContent = 'Copiar', 2000);
+  var text = document.getElementById('resultText').textContent;
+  navigator.clipboard.writeText(text).then(function() {
+    var btn = document.querySelector('.copy');
+    btn.textContent = 'Copiado';
+    setTimeout(function(){ btn.textContent = 'Copiar'; }, 2000);
   });
 }
 </script>
