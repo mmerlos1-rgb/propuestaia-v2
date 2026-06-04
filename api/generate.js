@@ -22,7 +22,7 @@ module.exports = async function handler(req, res) {
     let anthropicBody;
     if (body.prompt) {
       anthropicBody = {
-        claude-sonnet-4-5
+        claude-sonnet-4-5-20251001
         max_tokens: 1000,
         messages: [{ role: "user", content: body.prompt }],
       };
