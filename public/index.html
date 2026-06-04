@@ -3,115 +3,132 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>PropuestaIA</title>
+<title>PropuestaIA — Propuestas comerciales en 30 segundos</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-body{background:#050a05;color:#e8f0e8;font-family:system-ui,sans-serif;min-height:100vh;padding:2rem 1rem}
-.wrap{max-width:700px;margin:0 auto}
-h1{font-size:2.5rem;font-weight:800;color:#00e676;margin-bottom:.5rem}
-p.sub{color:#7a9a7a;margin-bottom:2rem}
+body{background:#050a05;color:#e8f0e8;font-family:system-ui,sans-serif;padding:2rem 1rem}
+.wrap{max-width:680px;margin:0 auto}
+h1{font-size:2.2rem;font-weight:800;color:#00e676;margin-bottom:.4rem}
+.sub{color:#7a9a7a;margin-bottom:2rem;font-size:15px}
 .field{margin-bottom:1rem}
-label{display:block;font-size:12px;font-weight:600;color:#7a9a7a;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
-input,textarea,select{width:100%;padding:10px 14px;background:#0d1a0d;border:1px solid rgba(0,230,118,0.2);border-radius:8px;color:#e8f0e8;font-family:system-ui,sans-serif;font-size:14px;outline:none}
-textarea{min-height:80px;resize:vertical}
+label{display:block;font-size:11px;font-weight:700;color:#7a9a7a;text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+input,textarea,select{width:100%;padding:10px 12px;background:#0d1a0d;border:1px solid rgba(0,230,118,0.2);border-radius:8px;color:#e8f0e8;font-family:system-ui,sans-serif;font-size:14px;outline:none}
+input:focus,textarea:focus,select:focus{border-color:#00e676}
+textarea{min-height:75px;resize:vertical;line-height:1.5}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.btn{width:100%;padding:14px;background:#00e676;color:#050a05;font-size:15px;font-weight:700;border:none;border-radius:10px;cursor:pointer;margin-top:1rem}
-.btn:disabled{background:#2a4a2a;color:#3a6a3a;cursor:not-allowed}
-.result{display:none;margin-top:1.5rem;background:#0d1a0d;border:1px solid rgba(0,230,118,0.3);border-radius:12px;overflow:hidden}
-.result-top{background:rgba(0,230,118,0.1);padding:.75rem 1.25rem;display:flex;justify-content:space-between;align-items:center}
-.result-top span{font-size:13px;font-weight:600;color:#00e676}
-.copy-btn{font-size:12px;padding:5px 14px;background:transparent;border:1px solid rgba(0,230,118,0.3);color:#00e676;border-radius:8px;cursor:pointer}
-.result-text{padding:1.25rem;font-size:14px;line-height:1.8;white-space:pre-wrap}
-.loading{display:none;text-align:center;padding:2rem;color:#7a9a7a}
-.spinner{width:32px;height:32px;border:3px solid rgba(0,230,118,0.2);border-top-color:#00e676;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
+.btn{width:100%;padding:13px;background:#00e676;color:#050a05;font-size:15px;font-weight:700;border:none;border-radius:10px;cursor:pointer;margin-top:.5rem}
+.btn:hover{background:#00ff7f}
+.btn:disabled{background:#1a3a1a;color:#3a6a3a;cursor:not-allowed}
+.loading{display:none;text-align:center;padding:1.5rem;color:#7a9a7a;font-size:14px}
+.spin{width:28px;height:28px;border:3px solid rgba(0,230,118,0.15);border-top-color:#00e676;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 8px}
 @keyframes spin{to{transform:rotate(360deg)}}
+.result{display:none;margin-top:1.25rem;background:#0d1a0d;border:1px solid rgba(0,230,118,0.25);border-radius:12px;overflow:hidden}
+.result-head{background:rgba(0,230,118,0.08);padding:.7rem 1.2rem;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(0,230,118,0.15)}
+.result-head span{font-size:13px;font-weight:600;color:#00e676}
+.cbtn{font-size:12px;padding:4px 12px;background:transparent;border:1px solid rgba(0,230,118,0.3);color:#00e676;border-radius:6px;cursor:pointer;font-family:system-ui,sans-serif}
+.result-body{padding:1.2rem;font-size:14px;line-height:1.8;white-space:pre-wrap;color:#e8f0e8}
+@media(max-width:500px){.row{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>PropuestaIA</h1>
-  <p class="sub">Genera propuestas comerciales profesionales en 30 segundos con IA</p>
+  <p class="sub">Propuestas comerciales profesionales en 30 segundos con IA</p>
+
   <div class="row">
     <div class="field"><label>Tu empresa</label><input id="f1" type="text" placeholder="Agencia Norte"/></div>
     <div class="field"><label>Tu nombre</label><input id="f2" type="text" placeholder="Carlos García"/></div>
   </div>
   <div class="row">
     <div class="field"><label>Empresa cliente</label><input id="f3" type="text" placeholder="Restaurante La Brasa"/></div>
-    <div class="field"><label>Sector</label><input id="f4" type="text" placeholder="Restauración"/></div>
+    <div class="field"><label>Sector del cliente</label><input id="f4" type="text" placeholder="Restauración"/></div>
   </div>
-  <div class="field"><label>Necesidad del cliente</label><textarea id="f5" placeholder="No tienen presencia en redes sociales..."></textarea></div>
-  <div class="field"><label>Servicio a ofrecer</label><input id="f6" type="text" placeholder="Gestión de redes sociales"/></div>
+  <div class="field"><label>Necesidad o problema del cliente</label><textarea id="f5" placeholder="No tienen presencia en redes sociales y pierden clientes..."></textarea></div>
+  <div class="field"><label>Servicio que ofreces</label><input id="f6" type="text" placeholder="Gestión de redes sociales"/></div>
   <div class="row">
     <div class="field"><label>Precio (€)</label><input id="f7" type="number" placeholder="499"/></div>
     <div class="field"><label>Modalidad</label>
       <select id="f8">
-        <option value="mensual">Suscripción mensual</option>
+        <option value="al mes">Suscripción mensual</option>
         <option value="pago único">Pago único</option>
         <option value="por proyecto">Por proyecto</option>
       </select>
     </div>
   </div>
+
   <button class="btn" id="genBtn" onclick="generar()">✦ Generar propuesta con IA</button>
-  <div class="loading" id="loading"><div class="spinner"></div>Generando tu propuesta...</div>
+
+  <div class="loading" id="loading">
+    <div class="spin"></div>
+    Generando tu propuesta...
+  </div>
+
   <div class="result" id="resultBox">
-    <div class="result-top"><span>✓ Propuesta lista</span><button class="copy-btn" onclick="copiar()">Copiar</button></div>
-    <div class="result-text" id="resultText"></div>
+    <div class="result-head">
+      <span>✓ Propuesta lista</span>
+      <button class="cbtn" onclick="copiar()">Copiar</button>
+    </div>
+    <div class="result-body" id="resultText"></div>
   </div>
 </div>
+
 <script>
 function generar() {
-  var v1=document.getElementById('f1').value||'Mi Empresa';
-  var v2=document.getElementById('f2').value||'El equipo';
-  var v3=document.getElementById('f3').value||'el cliente';
-  var v4=document.getElementById('f4').value||'su sector';
-  var v5=document.getElementById('f5').value||'mejorar su negocio';
-  var v6=document.getElementById('f6').value||'nuestros servicios';
-  var v7=document.getElementById('f7').value||'499';
-  var v8=document.getElementById('f8').value;
-  var btn=document.getElementById('genBtn');
-  var loading=document.getElementById('loading');
-  var box=document.getElementById('resultBox');
-  var out=document.getElementById('resultText');
-  btn.disabled=true;
-  loading.style.display='block';
-  box.style.display='none';
-  var prompt='Redacta una propuesta comercial B2B completa y persuasiva. Empresa vendedora: '+v1+', representada por '+v2+'. Cliente: '+v3+' del sector '+v4+'. Problema del cliente: '+v5+'. Servicio: '+v6+'. Precio: '+v7+' EUR '+v8+'. Incluye saludo, diagnostico, solucion, entregables, precio, diferencial y llamada a la accion. Maximo 400 palabras.';
-  fetch('/api/generate',{
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({prompt:prompt})
+  var f1 = document.getElementById('f1').value || 'Mi Empresa';
+  var f2 = document.getElementById('f2').value || 'El equipo';
+  var f3 = document.getElementById('f3').value || 'el cliente';
+  var f4 = document.getElementById('f4').value || 'su sector';
+  var f5 = document.getElementById('f5').value || 'mejorar su negocio';
+  var f6 = document.getElementById('f6').value || 'nuestros servicios';
+  var f7 = document.getElementById('f7').value || '499';
+  var f8 = document.getElementById('f8').value;
+
+  var btn = document.getElementById('genBtn');
+  var loading = document.getElementById('loading');
+  var box = document.getElementById('resultBox');
+  var out = document.getElementById('resultText');
+
+  btn.disabled = true;
+  loading.style.display = 'block';
+  box.style.display = 'none';
+
+  var prompt = 'Eres experto en ventas B2B. Redacta una propuesta comercial completa y persuasiva con estos datos:\n\nEmpresa vendedora: ' + f1 + '\nRepresentada por: ' + f2 + '\nCliente: ' + f3 + '\nSector del cliente: ' + f4 + '\nProblema del cliente: ' + f5 + '\nServicio ofrecido: ' + f6 + '\nPrecio: ' + f7 + ' euros ' + f8 + '\n\nEstructura: 1) Encabezado con fecha, 2) Saludo personalizado, 3) Diagnostico del problema, 4) Solucion propuesta, 5) Que incluye (4 puntos), 6) Inversion y modalidad de pago, 7) Por que elegirnos (2 razones), 8) Llamada a la accion, 9) Firma de ' + f2 + ' en ' + f1 + '. Maximo 380 palabras. Sin asteriscos ni markdown.';
+
+  fetch('/api/generate', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt: prompt })
   })
-  .then(function(r){return r.text();})
-  .then(function(t){
-    try {
-      var d=JSON.parse(t);
-      if(d.content && d.content[0] && d.content[0].text){
-        out.textContent=d.content[0].text;
-      } else if(d.error){
-        out.textContent='Error: '+JSON.stringify(d.error);
-      } else {
-        out.textContent=t;
-      }
-    } catch(e){
-      out.textContent=t;
+  .then(function(r) { return r.json(); })
+  .then(function(d) {
+    var txt = '';
+    if (d && d.content && d.content[0] && d.content[0].text) {
+      txt = d.content[0].text;
+    } else if (d && d.error) {
+      txt = 'Error: ' + JSON.stringify(d.error);
+    } else {
+      txt = JSON.stringify(d, null, 2);
     }
-    box.style.display='block';
-    box.scrollIntoView({behavior:'smooth'});
+    out.textContent = txt;
+    box.style.display = 'block';
+    box.scrollIntoView({ behavior: 'smooth' });
   })
-  .catch(function(e){
-    out.textContent='Error: '+e.message;
-    box.style.display='block';
+  .catch(function(e) {
+    out.textContent = 'Error de conexion: ' + e.message;
+    box.style.display = 'block';
   })
-  .finally(function(){
-    loading.style.display='none';
-    btn.disabled=false;
+  .finally(function() {
+    loading.style.display = 'none';
+    btn.disabled = false;
   });
 }
-function copiar(){
-  navigator.clipboard.writeText(document.getElementById('resultText').textContent).then(function(){
-    var b=document.querySelector('.copy-btn');
-    b.textContent='Copiado';
-    setTimeout(function(){b.textContent='Copiar';},2000);
+
+function copiar() {
+  var t = document.getElementById('resultText').textContent;
+  navigator.clipboard.writeText(t).then(function() {
+    var b = document.querySelector('.cbtn');
+    b.textContent = 'Copiado ✓';
+    setTimeout(function() { b.textContent = 'Copiar'; }, 2000);
   });
 }
 </script>
