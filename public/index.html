@@ -146,7 +146,7 @@ Sé concreto y personalizado. Máximo 400 palabras. Sin markdown.`;
     });
 
     const data = await resp.json();
-    const data = await resp.json();
+  
 console.log('Respuesta:', JSON.stringify(data));
 const text = data.content[0].text;
     document.getElementById('resultText').textContent = text;
