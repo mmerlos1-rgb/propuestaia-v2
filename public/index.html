@@ -13,16 +13,14 @@ p.sub{color:#7a9a7a;margin-bottom:2rem}
 .field{margin-bottom:1rem}
 label{display:block;font-size:12px;font-weight:600;color:#7a9a7a;text-transform:uppercase;letter-spacing:.06em;margin-bottom:5px}
 input,textarea,select{width:100%;padding:10px 14px;background:#0d1a0d;border:1px solid rgba(0,230,118,0.2);border-radius:8px;color:#e8f0e8;font-family:system-ui,sans-serif;font-size:14px;outline:none}
-input:focus,textarea:focus,select:focus{border-color:#00e676}
 textarea{min-height:80px;resize:vertical}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
 .btn{width:100%;padding:14px;background:#00e676;color:#050a05;font-size:15px;font-weight:700;border:none;border-radius:10px;cursor:pointer;margin-top:1rem}
-.btn:hover{background:#00ff7f}
 .btn:disabled{background:#2a4a2a;color:#3a6a3a;cursor:not-allowed}
 .result{display:none;margin-top:1.5rem;background:#0d1a0d;border:1px solid rgba(0,230,118,0.3);border-radius:12px;overflow:hidden}
 .result-top{background:rgba(0,230,118,0.1);padding:.75rem 1.25rem;display:flex;justify-content:space-between;align-items:center}
 .result-top span{font-size:13px;font-weight:600;color:#00e676}
-.copy-btn{font-size:12px;padding:5px 14px;background:transparent;border:1px solid rgba(0,230,118,0.3);color:#00e676;border-radius:8px;cursor:pointer;font-family:system-ui,sans-serif}
+.copy-btn{font-size:12px;padding:5px 14px;background:transparent;border:1px solid rgba(0,230,118,0.3);color:#00e676;border-radius:8px;cursor:pointer}
 .result-text{padding:1.25rem;font-size:14px;line-height:1.8;white-space:pre-wrap}
 .loading{display:none;text-align:center;padding:2rem;color:#7a9a7a}
 .spinner{width:32px;height:32px;border:3px solid rgba(0,230,118,0.2);border-top-color:#00e676;border-radius:50%;animation:spin .7s linear infinite;margin:0 auto 12px}
@@ -62,55 +60,58 @@ textarea{min-height:80px;resize:vertical}
 </div>
 <script>
 function generar() {
-  var v1 = document.getElementById('f1').value || 'Mi Empresa';
-  var v2 = document.getElementById('f2').value || 'El equipo';
-  var v3 = document.getElementById('f3').value || 'el cliente';
-  var v4 = document.getElementById('f4').value || 'su sector';
-  var v5 = document.getElementById('f5').value || 'mejorar su negocio';
-  var v6 = document.getElementById('f6').value || 'nuestros servicios';
-  var v7 = document.getElementById('f7').value || '499';
-  var v8 = document.getElementById('f8').value;
-  var btn = document.getElementById('genBtn');
-  var loading = document.getElementById('loading');
-  var box = document.getElementById('resultBox');
-  var out = document.getElementById('resultText');
-  btn.disabled = true;
-  loading.style.display = 'block';
-  box.style.display = 'none';
-  var prompt = 'Eres experto en propuestas comerciales B2B. Redacta una propuesta COMPLETA y persuasiva con estos datos:\n- Empresa vendedora: ' + v1 + ', representada por ' + v2 + '\n- Cliente: ' + v3 + ' del sector ' + v4 + '\n- Problema del cliente: ' + v5 + '\n- Servicio ofrecido: ' + v6 + '\n- Precio: ' + v7 + ' EUR (' + v8 + ')\nIncluye: saludo personalizado, diagnostico, solucion propuesta, 4 entregables, precio, por que elegirnos y llamada a la accion. Maximo 400 palabras. Sin simbolos markdown.';
-  fetch('/api/generate', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({prompt: prompt})
+  var v1=document.getElementById('f1').value||'Mi Empresa';
+  var v2=document.getElementById('f2').value||'El equipo';
+  var v3=document.getElementById('f3').value||'el cliente';
+  var v4=document.getElementById('f4').value||'su sector';
+  var v5=document.getElementById('f5').value||'mejorar su negocio';
+  var v6=document.getElementById('f6').value||'nuestros servicios';
+  var v7=document.getElementById('f7').value||'499';
+  var v8=document.getElementById('f8').value;
+  var btn=document.getElementById('genBtn');
+  var loading=document.getElementById('loading');
+  var box=document.getElementById('resultBox');
+  var out=document.getElementById('resultText');
+  btn.disabled=true;
+  loading.style.display='block';
+  box.style.display='none';
+  var prompt='Redacta una propuesta comercial B2B completa y persuasiva. Empresa vendedora: '+v1+', representada por '+v2+'. Cliente: '+v3+' del sector '+v4+'. Problema del cliente: '+v5+'. Servicio: '+v6+'. Precio: '+v7+' EUR '+v8+'. Incluye saludo, diagnostico, solucion, entregables, precio, diferencial y llamada a la accion. Maximo 400 palabras.';
+  fetch('/api/generate',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({prompt:prompt})
   })
-  .then(function(r){ return r.json(); })
-  .then(function(d){
-    var txt = '';
-    if (d && d.content && d.content.length > 0 && d.content[0].text) {
-      txt = d.content[0].text;
-    } else if (d && d.error) {
-      txt = 'Error: ' + (d.error.message || d.error);
-    } else {
-      txt = JSON.stringify(d);
+  .then(function(r){return r.text();})
+  .then(function(t){
+    try {
+      var d=JSON.parse(t);
+      if(d.content && d.content[0] && d.content[0].text){
+        out.textContent=d.content[0].text;
+      } else if(d.error){
+        out.textContent='Error: '+JSON.stringify(d.error);
+      } else {
+        out.textContent=t;
+      }
+    } catch(e){
+      out.textContent=t;
     }
-    out.textContent = txt;
-    box.style.display = 'block';
+    box.style.display='block';
     box.scrollIntoView({behavior:'smooth'});
   })
   .catch(function(e){
-    out.textContent = 'Error de conexion: ' + e.message;
-    box.style.display = 'block';
+    out.textContent='Error: '+e.message;
+    box.style.display='block';
   })
   .finally(function(){
-    loading.style.display = 'none';
-    btn.disabled = false;
+    loading.style.display='none';
+    btn.disabled=false;
   });
 }
-function copiar() {
+function copiar(){
   navigator.clipboard.writeText(document.getElementById('resultText').textContent).then(function(){
-    var b = document.querySelector('.copy-btn');
-    b.textContent = 'Copiado';
-    setTimeout(function(){ b.textContent = 'Copiar'; }, 2000);
+    var b=document.querySelector('.copy-btn');
+    b.textContent='Copiado';
+    setTimeout(function(){b.textContent='Copiar';},2000);
   });
 }
 </script>
