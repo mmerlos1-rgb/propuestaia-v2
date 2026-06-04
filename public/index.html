@@ -125,7 +125,7 @@ async function generar() {
       body: JSON.stringify({ prompt: prompt })
     });
     var json = await resp.json();
-    var text = json.content[0].text;
+    var text = json.content ? json.content[0].text : (json.error || JSON.stringify(json));
     document.getElementById('resultText').textContent = text;
     result.style.display = 'block';
     result.scrollIntoView({ behavior: 'smooth' });
